@@ -1,0 +1,9 @@
+
+eureka:
+  instance:
+    preferIpAddress: true
+    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.uuid}}
+  client:
+    healthcheck.enable: true
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}

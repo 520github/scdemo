@@ -1,0 +1,19 @@
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+     #false:不作为一个客户端注册到注册中心
+    registerWithEureka: false
+    fetchRegistry: false
+
+# 配置zuul路由时用将此属性设置为false
+ribbon:
+  eureka:
+    enabled: false
+
+
+
+#1、在生产上可以开自注册，部署两个server
+#2、在本机器上测试的时候，可以把比值调低，比如0.49
+#3、或者简单粗暴把自我保护模式关闭
+

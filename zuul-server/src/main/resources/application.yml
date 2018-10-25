@@ -1,0 +1,16 @@
+---
+spring:
+  application:
+    name: zuul-server
+
+server:
+  port: ${SERVER_PORT:8080}
+
+
+management:
+  security:
+    enabled: true
+
+security:
+  basic:
+    enabled: false

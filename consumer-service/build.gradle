@@ -1,0 +1,92 @@
+import java.text.SimpleDateFormat
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.13.RELEASE") // 1.5.13.RELEASE 正常 , 2.0.2.RELEASE 不能注入
+    }
+}
+
+
+plugins {
+    id 'java'
+    id 'application'
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+
+def buildTime() {
+    def df = new SimpleDateFormat("yyyyMMddHHmm")
+    df.setTimeZone(TimeZone.getTimeZone("CST"))
+    return df.format(new Date())
+}
+
+
+version = buildTime()
+
+
+// force code format
+task runFormat(type: JavaExec) {
+    def mainJavaFiles = sourceSets.main.allJava.files
+    mainJavaFiles.removeIf { file -> file.name.endsWith('module-info.java') }
+    classpath = fileTree(dir: "gradle/format", include: '*.jar')
+    main 'com.google.googlejavaformat.java.Main'
+    args '--replace'
+    args mainJavaFiles
+    args sourceSets.test.allJava.files
+}
+compileJava.dependsOn runFormat
+
+
+
+
+
+mainClassName = 'com.panda.cloud.service.demo.ConsumerServiceApplication'
+
+dependencies {
+
+    compile 'com.google.guava:guava:23.0'
+
+    // spring
+    compile 'org.springframework:spring-jdbc:+'
+
+    // spring-boot
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-devtools'
+
+
+    // spring-cloud-netflix
+    compile 'org.springframework.cloud:spring-cloud-starter-netflix-archaius'
+    compile 'org.springframework.cloud:spring-cloud-starter-hystrix'
+    compile 'org.springframework.cloud:spring-cloud-starter-eureka'
+    compile 'org.springframework.cloud:spring-cloud-starter-feign'
+
+
+    testCompile 'junit:junit:4.+'
+}
+
+repositories {
+    jcenter()
+}
+
+
+dependencyManagement {
+    imports {
+        mavenBom 'com.amazonaws:aws-java-sdk-bom:1.+'
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:+"
+    }
+}

@@ -1,0 +1,15 @@
+# 从配置服务器读取配置,集中管理
+#spring.cloud.config.discovery.enabled: true
+#spring.cloud.config.discovery.serviceId: config-server
+# 如果从配置服务器获取数据失败，则终止启动
+#spring.cloud.config.failFast: true
+
+
+eureka:
+  instance:
+    preferIpAddress: true
+    instanceId: ${spring.application.name}:${spring.application.instance_id:${random.uuid}}
+  client:
+    healthcheck.enable: true
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}

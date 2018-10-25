@@ -1,0 +1,60 @@
+version: '3'
+services:
+  eureka:
+    image: java:openjdk-8-jre-alpine
+    ports:
+      - "8761:8761"
+    environment:
+      TZ: 'Asia/Shanghai'
+    volumes:
+      - "./eureka-server.jar:/opt/eureka-server.jar"
+    command: java -jar /opt/eureka-server.jar
+
+  zuul:
+    image: java:openjdk-8-jre-alpine
+    links:
+      - eureka
+    ports:
+      - "8080:8080"
+    environment:
+      TZ: 'Asia/Shanghai'
+      EUREKA_URI: http://eureka:8761/eureka
+    volumes:
+      - "./zuul-server.jar:/opt/zuul-server.jar"
+    command: java -jar /opt/zuul-server.jar
+
+  gretting-01:
+    image: java:openjdk-8-jre-alpine
+    links:
+      - eureka
+    environment:
+      TZ: 'Asia/Shanghai'
+      EUREKA_URI: http://eureka:8761/eureka
+    volumes:
+      - "./greeting-service.jar:/opt/greeting-service.jar"
+    command: java -jar /opt/greeting-service.jar
+    
+  gretting-02:
+    image: java:openjdk-8-jre-alpine
+    links:
+      - eureka
+    environment:
+      TZ: 'Asia/Shanghai'
+      EUREKA_URI: http://eureka:8761/eureka
+    volumes:
+      - "./greeting-service.jar:/opt/greeting-service.jar"
+    command: java -jar /opt/greeting-service.jar
+  
+    
+    
+  consumer:
+    image: java:openjdk-8-jre-alpine
+    links:
+      - eureka
+    environment:
+      TZ: 'Asia/Shanghai'
+      EUREKA_URI: http://eureka:8761/eureka
+    volumes:
+      - "./consumer-service.jar:/opt/consumer-service.jar"
+    command: java -jar /opt/consumer-service.jar
+    
